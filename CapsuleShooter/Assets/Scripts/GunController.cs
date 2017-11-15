@@ -31,13 +31,28 @@ public class GunController : MonoBehaviour
 		m_EquippedGun.transform.parent = m_WeaponHolder;
 	}
 
-	public void TriggerShoot()
+	public void OnTriggerHold()
 	{
 		if (m_EquippedGun != null)
 		{
 			// If there's a weapon equipped we are able to shoot.
-			m_EquippedGun.Shoot ();
+			m_EquippedGun.OnTriggerHold ();
 		}
 	}
 
+	public void OnTriggerReleased()
+	{
+		if (m_EquippedGun != null)
+		{
+			m_EquippedGun.OnTriggerReleased ();
+		}
+	}
+
+	public float GetHeight
+	{
+		get
+		{
+			return m_WeaponHolder.position.y;
+		}
+	}
 }

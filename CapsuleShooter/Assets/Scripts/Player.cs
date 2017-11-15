@@ -8,6 +8,8 @@ public class Player : LivingEntity
 {
 	public float m_MoveSpeed = 5f;
 
+	public Crosshairs m_Crosshairs;
+
 	private PlayerController m_Controller;
 	private GunController m_GunController;
 	private Camera m_ViewCamera;
@@ -32,7 +34,7 @@ public class Player : LivingEntity
 
 		// Look input: A ray from the camera is casted into an invisible plane, the player will always be looking at that specific point which is determined by the mouse cursor's position.
 		Ray cursorRay = m_ViewCamera.ScreenPointToRay (Input.mousePosition);
-		Plane groundPlane = new Plane (Vector3.up, transform.position);
+		Plane groundPlane = new Plane (Vector3.up, Vector3.up * m_GunController.GetHeight);
 		float rayDistance;
 
 		if (groundPlane.Raycast(cursorRay, out rayDistance)) 
@@ -41,13 +43,21 @@ public class Player : LivingEntity
 			//Debug.DrawLine (cursorRay.origin, point, Color.red);
 
 			m_Controller.LookAt (point);
+
+			m_Crosshairs.transform.position = point;
+			//m_Crosshairs.DetectRays (cursorRay);
 		}
 
 		// Weapon input: Whenver the left mouse button is clicked and the player is able to. The gun will be triggered.
 
 		if (Input.GetMouseButton(0))
 		{
-			m_GunController.TriggerShoot ();
+			m_GunController.OnTriggerHold ();
+		}
+
+		if (Input.GetMouseButtonUp(0))
+		{
+			m_GunController.OnTriggerReleased ();
 		}
 	}
 }

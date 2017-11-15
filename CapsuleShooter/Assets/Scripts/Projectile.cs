@@ -8,6 +8,7 @@ public class Projectile : MonoBehaviour
 	public float m_Damage = 1f;
 
 	public LayerMask m_CollisionMask;
+	public Color m_TrailColor;
 
 	private float m_Lifetime = 3f;
 	private float m_SkinWidth = .1f;
@@ -19,8 +20,10 @@ public class Projectile : MonoBehaviour
 		Collider[] initialCollitions = Physics.OverlapSphere (transform.position, .1f, m_CollisionMask);
 		if (initialCollitions.Length > 0)
 		{
-			OnHitObject (initialCollitions[0]);
+			OnHitObject (initialCollitions[0], transform.position);
 		}
+
+		GetComponent<TrailRenderer> ().material.SetColor ("_TintColor", m_TrailColor);
 	}
 
 	public void SetSpeed(float newSpeed)
@@ -44,31 +47,20 @@ public class Projectile : MonoBehaviour
 
 		if (Physics.Raycast(ray, out hit, moveDistance + m_SkinWidth, m_CollisionMask, QueryTriggerInteraction.Collide)) 
 		{
-			OnHitObject (hit);
+			OnHitObject (hit.collider, hit.point);
 		}
 	}
 
-	private void OnHitObject(RaycastHit hit)
-	{
-		//Whenever a target is hit, the damage is dealt via the IDamageable interface and the bullet is destroyed.
-		IDamageable damageableObject = hit.collider.GetComponent<IDamageable> ();
 
-		if (damageableObject != null)
-		{
-			damageableObject.TakeHit (m_Damage, hit);
-		}
 
-		GameObject.Destroy (gameObject);
-	}
-
-	private void OnHitObject(Collider c)
+	private void OnHitObject(Collider c, Vector3 hitPoint)
 	{
 		//Whenever a target is hit, the damage is dealt via the IDamageable interface and the bullet is destroyed.
 		IDamageable damageableObject = c.GetComponent<IDamageable> ();
 
 		if (damageableObject != null)
 		{
-			damageableObject.TakeDamage (m_Damage);
+			damageableObject.TakeHit (m_Damage, hitPoint, transform.forward);
 		}
 
 		GameObject.Destroy (gameObject);

@@ -8,6 +8,8 @@ public class Enemy : LivingEntity
 {
 	public float m_Damage = 1f;
 
+	public ParticleSystem m_DeathEffect;
+
 	public enum State{Idle, Chasing, Attacking};
 	private State m_CurrentState;
 
@@ -26,29 +28,61 @@ public class Enemy : LivingEntity
 
 	private bool m_HasTarget;
 
-	protected override void Start()
+	private void Awake()
 	{
-		base.Start ();
 		m_Pathfinder = GetComponent<NavMeshAgent> ();
-	
-		m_SkinMaterial = GetComponent<Renderer> ().material;
-		m_OriginalColor = m_SkinMaterial.color;
 
 		if (GameObject.FindGameObjectWithTag("Player") != null) 
 		{
-			m_CurrentState = State.Chasing;
-
 			m_HasTarget = true;
 
 			m_Target = GameObject.FindGameObjectWithTag ("Player").transform;
 			m_TargetEntity = m_Target.GetComponent<LivingEntity> ();
-			m_TargetEntity.OnDeath += OnTargetDeath;
 
 			m_EnemyCollisionRadius = GetComponent<CapsuleCollider> ().radius;
 			m_TargetCollisionRadius = GetComponent<CapsuleCollider> ().radius;
+		}
+	}
+
+	protected override void Start()
+	{
+		base.Start ();
+		m_Pathfinder = GetComponent<NavMeshAgent> ();
+
+		if (m_HasTarget) 
+		{
+			m_CurrentState = State.Chasing;
+
+			m_TargetEntity.OnDeath += OnTargetDeath;
 
 			StartCoroutine (UpdatePath());
 		}
+	}
+
+	public void SetParameters(float moveSpeed, int hitsToKillPlayer, float enemyHealth, Color skinColor)
+	{
+		m_Pathfinder.speed = moveSpeed;
+
+		if (m_HasTarget)
+		{
+			m_Damage = Mathf.Ceil (m_TargetEntity.m_StartingHealth / hitsToKillPlayer);
+		}
+
+		m_StartingHealth = enemyHealth;
+
+		m_SkinMaterial = GetComponent<Renderer> ().material;
+		m_SkinMaterial.color = skinColor;
+		m_OriginalColor = m_SkinMaterial.color;
+	}
+
+	public override void TakeHit (float damage, Vector3 hitPoint, Vector3 hitDdirection)
+	{
+		if (damage >= m_Health)
+		{
+			Destroy(Instantiate (m_DeathEffect.gameObject, hitPoint, Quaternion.FromToRotation (Vector3.forward, hitDdirection)) as GameObject , m_DeathEffect.main.startLifetime.constant);
+		}
+
+		base.TakeHit (damage, hitPoint, hitDdirection);
 	}
 
 	private void OnTargetDeath()

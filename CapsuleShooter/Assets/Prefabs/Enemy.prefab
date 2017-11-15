@@ -96,6 +96,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_StartingHealth: 5
   m_Damage: 1
+  m_DeathEffect: {fileID: 198583435842814520, guid: b898183ea6052fd4b9e5f0a9ad3d2e86,
+    type: 2}
 --- !u!136 &136724952559154724
 CapsuleCollider:
   m_ObjectHideFlags: 1
