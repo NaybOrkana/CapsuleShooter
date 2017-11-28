@@ -6,7 +6,7 @@ public class LivingEntity : MonoBehaviour, IDamageable
 {
 	public float m_StartingHealth;
 
-	protected float m_Health;
+	public  float m_Health { get; protected set;}
 	protected bool m_IsItDead;
 
 	public event System.Action OnDeath;
@@ -32,7 +32,7 @@ public class LivingEntity : MonoBehaviour, IDamageable
 		}	
 	}
 
-	protected void Die()
+	public virtual void Die()
 	{
 		m_IsItDead = true;
 

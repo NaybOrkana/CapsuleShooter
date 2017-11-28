@@ -53,6 +53,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -68,6 +69,7 @@ MeshRenderer:
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -98,6 +100,7 @@ MonoBehaviour:
   m_Damage: 1
   m_DeathEffect: {fileID: 198583435842814520, guid: b898183ea6052fd4b9e5f0a9ad3d2e86,
     type: 2}
+  m_DeathMaterial: {fileID: 2100000, guid: f5ffe8893fdd2064282587560439c5b4, type: 2}
 --- !u!136 &136724952559154724
 CapsuleCollider:
   m_ObjectHideFlags: 1

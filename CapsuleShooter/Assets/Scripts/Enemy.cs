@@ -9,6 +9,9 @@ public class Enemy : LivingEntity
 	public float m_Damage = 1f;
 
 	public ParticleSystem m_DeathEffect;
+	public Material m_DeathMaterial;
+
+	public static event System.Action OnDeathStatic;
 
 	public enum State{Idle, Chasing, Attacking};
 	private State m_CurrentState;
@@ -18,6 +21,7 @@ public class Enemy : LivingEntity
 
 	private LivingEntity m_TargetEntity;
 	private Material m_SkinMaterial;
+
 	private Color m_OriginalColor;
 
 	private float m_AttackDistanceThreshold = 1.5f;
@@ -71,14 +75,25 @@ public class Enemy : LivingEntity
 		m_StartingHealth = enemyHealth;
 
 		m_SkinMaterial = GetComponent<Renderer> ().material;
+		m_DeathMaterial.color = skinColor;
+
 		m_SkinMaterial.color = skinColor;
 		m_OriginalColor = m_SkinMaterial.color;
 	}
 
 	public override void TakeHit (float damage, Vector3 hitPoint, Vector3 hitDdirection)
 	{
+		AudioManager.m_Instance.PlaySound ("Impact", transform.position);
+
 		if (damage >= m_Health)
 		{
+			if (OnDeathStatic != null) 
+			{
+				OnDeathStatic ();
+			}
+
+			AudioManager.m_Instance.PlaySound ("Enemy Death", transform.position);
+
 			Destroy(Instantiate (m_DeathEffect.gameObject, hitPoint, Quaternion.FromToRotation (Vector3.forward, hitDdirection)) as GameObject , m_DeathEffect.main.startLifetime.constant);
 		}
 
@@ -102,6 +117,8 @@ public class Enemy : LivingEntity
 				if (sqrDstToTarget < Mathf.Pow(m_AttackDistanceThreshold + m_EnemyCollisionRadius + m_TargetCollisionRadius, 2))
 				{
 					m_NextAttackTime = Time.time + m_TimeBetweenAttacks;
+
+					AudioManager.m_Instance.PlaySound ("Enemy Attack", transform.position);
 
 					StartCoroutine (AttackProcedure ());
 				}

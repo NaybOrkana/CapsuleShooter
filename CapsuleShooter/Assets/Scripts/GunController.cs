@@ -5,17 +5,13 @@ using UnityEngine;
 public class GunController : MonoBehaviour 
 {
 	public Transform m_WeaponHolder;
-	public Gun m_StartingGun;
+	public Gun[] m_AllGuns;
 
 	private Gun m_EquippedGun;
 
 	private void Start()
 	{
-		if (m_StartingGun != null) 
-		{
-			// If there is no gun equipped the starting gun we'll be equipped.
-			EquipGun (m_StartingGun);
-		}
+		
 	}
 
 	public void EquipGun(Gun gunToEquip)
@@ -29,6 +25,11 @@ public class GunController : MonoBehaviour
 		// The gun is instantiated in the scened and parented to the player's "hand".
 		m_EquippedGun = Instantiate (gunToEquip, m_WeaponHolder.position, m_WeaponHolder.rotation) as Gun;
 		m_EquippedGun.transform.parent = m_WeaponHolder;
+	}
+
+	public void EquipGun(int weaponIndex)
+	{
+		EquipGun (m_AllGuns [weaponIndex]);
 	}
 
 	public void OnTriggerHold()
@@ -53,6 +54,22 @@ public class GunController : MonoBehaviour
 		get
 		{
 			return m_WeaponHolder.position.y;
+		}
+	}
+
+	public void Aim()
+	{
+		if (m_EquippedGun != null)
+		{
+			m_EquippedGun.Aim ();
+		}
+	}
+
+	public void Reload()
+	{
+		if (m_EquippedGun != null)
+		{
+			m_EquippedGun.Reloading ();
 		}
 	}
 }

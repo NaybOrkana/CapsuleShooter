@@ -21,7 +21,7 @@ public class Spawner : MonoBehaviour
 
 	private MapGenerator m_Map;
 
-	private float m_TimeBetweenCampingChecks = 2f;
+	private float m_TimeBetweenCampingChecks = 3f;
 	private float m_CampThresholdDistance = 1.5f;
 	private float m_NextCampCheckTime;
 	private Vector3 m_PreviousCampPosition;
@@ -83,8 +83,8 @@ public class Spawner : MonoBehaviour
 
 	private IEnumerator SpawnEnemies()
 	{
-		float spawnDelay = 1f;
-		float tileFlashSpeed = 4f;
+		float spawnDelay = 1.5f;
+		float tileFlashSpeed = 5f;
 
 		Transform randomTile = m_Map.GetRandomOpenTile ();
 
@@ -133,6 +133,9 @@ public class Spawner : MonoBehaviour
 
 	private void NextWave()
 	{
+		if (m_CurrentWaveNumber > 0) {
+			AudioManager.m_Instance.PlaySound2D ("Level Complete");
+		}
 		m_CurrentWaveNumber++;
 
 		if (m_CurrentWaveNumber - 1 < m_Waves.Length)
